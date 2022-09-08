@@ -55,7 +55,7 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 }
 
 func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,updateBuilder squirrel.UpdateBuilder, id int64) error {
-	updateBuilder = updateBuilder.Where("id = ?", id).Set("del_state", globalkey.DelStateYes)
+	updateBuilder = updateBuilder.Where("id = ?", id).Set("deleted_at", globalkey.DelStateYes)
 	if _,err:= m.UpdateWithId(ctx,session, updateBuilder,id);err!= nil{
 		return errors.Wrapf(xerr.NewErrMsg("删除数据失败"),"{{.upperStartCamelObject}}Model delete err : %+v",err)
 	}
@@ -65,7 +65,7 @@ func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,
 
 func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error) {
 
-	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
+	query, values, err := rowBuilder.Where("deleted_at ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Cont
 
 func (m *default{{.upperStartCamelObject}}Model) FindSum(ctx context.Context,sumBuilder squirrel.SelectBuilder) (float64,error) {
 
-	query, values, err := sumBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
+	query, values, err := sumBuilder.Where("deleted_at ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -105,7 +105,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindSum(ctx context.Context,sum
 
 func (m *default{{.upperStartCamelObject}}Model) FindCount(ctx context.Context,countBuilder squirrel.SelectBuilder) (int64,error) {
 
-	query, values, err := countBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
+	query, values, err := countBuilder.Where("deleted_at ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -130,7 +130,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindAll(ctx context.Context,row
 		rowBuilder = rowBuilder.OrderBy(orderBy)
 	}
 
-	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
+	query, values, err := rowBuilder.Where("deleted_at ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByPage(ctx context.
 	}
 	offset := (page - 1) * pageSize
 
-	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).Offset(uint64(offset)).Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("deleted_at ?", globalkey.DelStateNo).Offset(uint64(offset)).Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByIdDESC(ctx contex
 		rowBuilder = rowBuilder.Where(" id < ? " , preMinId)
 	}
 
-	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).OrderBy("id DESC").Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("deleted_at ?", globalkey.DelStateNo).OrderBy("id DESC").Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByIdASC(ctx context
 		rowBuilder = rowBuilder.Where(" id > ? " , preMaxId)
 	}
 
-	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).OrderBy("id ASC").Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("deleted_at ?", globalkey.DelStateNo).OrderBy("id ASC").Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
